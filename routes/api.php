@@ -11,12 +11,31 @@ use App\Http\Controllers\Api\v1\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    Route::apiResource('students', StudentController::class);
-    Route::apiResource('users', UserController::class);
-    Route::apiResource('teachers', TeacherController::class);
-    Route::apiResource('subjects', SubjectController::class);
-    Route::apiResource('school-classes', SchoolClassController::class);
-    Route::apiResource('enrollments', EnrollmentController::class);
-    Route::apiResource('attendances', AttendanceController::class);
-    Route::apiResource('parents', ParentController::class);
+    
+    // Public routes (if any) could go here (e.g., login)
+
+    // Protected routes
+    Route::middleware('auth:sanctum')->group(function () {
+        
+        // Admin-only routes
+        Route::middleware('role:admin')->group(function () {
+            Route::apiResource('users', UserController::class);
+            Route::apiResource('teachers', TeacherController::class);
+            Route::apiResource('parents', ParentController::class);
+            Route::apiResource('students', StudentController::class);
+        });
+
+        // Admin and Teacher routes
+        Route::middleware('role:admin,teacher')->group(function () {
+            Route::apiResource('school-classes', SchoolClassController::class);
+            Route::apiResource('subjects', SubjectController::class);
+        });
+
+        // Routes shared by multiple roles, handled by Policies
+        Route::apiResource('attendances', AttendanceController::class);
+        Route::apiResource('enrollments', EnrollmentController::class);
+        
+        // Profiles (everyone can view their own, etc.)
+        Route::get('/me', [UserController::class, 'show']); // Example
+    });
 });
