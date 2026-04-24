@@ -2,8 +2,20 @@
 
 A robust, secure, and modern RESTful API designed specifically for high school administration. Built with Laravel 12, this system provides a unified interface for managing students, teachers, parents, attendance, and academic performance.
 
-## 🚀 Features
+---
 
+## 🤖 Development Methodology: The "AI-First" Approach
+
+This project represents a shift in modern software engineering. It was **developed entirely through conscious and aware prompting** using the **Gemini CLI** and autonomous agents.
+
+- **Zero Manual Code Editing:** Every line of code, migration, policy, and architectural decision was executed by an AI agent under strategic direction.
+- **Agentic Workflow:** The development followed a rigorous Research -> Strategy -> Execution cycle, ensuring high-quality, idiomatic Laravel code.
+- **Skill Evolution:** This project serves as a practical exercise in **Prompt Engineering and Agentic Orchestration**, aimed at staying relevant in the new paradigm of software development and maintenance.
+
+---
+
+## 🚀 Features
+... (rest of the content)
 - **Advanced Role-Based Access Control (RBAC):**
   - **Admins:** Full system oversight.
   - **Teachers:** Manage attendance, subjects, and students in their classes.
