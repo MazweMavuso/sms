@@ -1,0 +1,101 @@
+# Laravel Project Guidelines
+School Management system api (sms_api)
+
+## Stack & Versions
+- PHP 8.2
+- Laravel 12
+- Pest v3 / PHPUnit v11
+- Laravel Sanctum (auth)
+- Laravel Pint (code formatter)
+- Laravel Sail (local dev)
+
+---
+
+## Architecture Rules
+- Controllers must stay thin — delegate all business logic to Service classes
+- All business logic lives in `app/Services/`
+- All database access goes through Repository classes in `app/Repositories/`
+- APIs must be versioned under `/api/v1`
+- Use Form Requests for all validation
+- Use API Resources for all responses
+- Use Laravel Sanctum for authentication
+
+---
+
+## Laravel 12 Structure
+- Middleware is NOT in `app/Http/Kernel.php` — configure in `bootstrap/app.php` via `Application::configure()->withMiddleware()`
+- `bootstrap/app.php` handles middleware, exceptions, and routing registration
+- `bootstrap/providers.php` contains application service providers
+- `app/Console/Kernel.php` does not exist — use `bootstrap/app.php` or `routes/console.php`
+- Console commands in `app/Console/Commands/` are auto-registered, no manual registration needed
+
+---
+
+## Models & Database
+- Use `php artisan make:model --no-interaction` to create models
+- Always create factories and seeders when creating new models
+- Define casts in a `casts()` method on the model, not the `$casts` property
+- When modifying a column in a migration, include ALL previously defined attributes or they will be dropped
+- Eager load limits natively: `$query->latest()->limit(10)`
+
+---
+
+## APIs & Resources
+- Always use Eloquent API Resources for API responses
+- Always version API routes under `/api/v1`
+- Use named routes and the `route()` function for URL generation
+
+---
+
+## PHP Conventions
+- Always use curly braces for control structures, even single-line bodies
+- Use PHP 8 constructor property promotion: `public function __construct(public MyService $service) {}`
+- Use explicit return types and type hints on all methods: `function handle(User $user): bool`
+- Use TitleCase for Enum keys: `FavoritePerson`, `Monthly`
+- Use PHPDoc blocks over inline comments; inline comments only for exceptionally complex logic
+- Use array shape type definitions in PHPDoc blocks
+
+---
+
+## Naming Conventions
+- Use descriptive names: `isRegisteredForDiscounts`, not `discount()`
+- Follow existing sibling file conventions for structure, naming, and approach
+- Check for existing components/classes to reuse before creating new ones
+
+---
+
+## Testing (Pest)
+- All tests use Pest v3: `php artisan make:test --pest {name}`
+- Most tests should be feature tests; use `--unit` only for unit tests
+- Run tests: `php artisan test --compact`
+- Filter tests: `php artisan test --compact --filter=testName`
+- Always use factories to create models in tests
+- Check factory states before manually setting up model attributes
+- Use `fake()->word()` / `fake()->randomDigit()` following existing conventions
+- Do NOT delete tests without approval
+
+---
+
+## Code Formatting
+- After modifying any PHP file, run: `vendor/bin/pint --dirty --format agent`
+- Do NOT run `--test` flag, always run with `--format agent` to fix issues
+
+---
+
+## Artisan Usage
+- Use `php artisan make:` commands to create all new files
+- Always pass `--no-interaction` to Artisan commands
+- Inspect routes: `php artisan route:list --path=api --except-vendor`
+- Read config: `php artisan config:show app.name`
+- Check env: read `.env` directly
+- Use `php artisan list` to discover commands, `php artisan [command] --help` for options
+
+---
+
+## General Rules
+- Stick to existing directory structure; don't create new base folders
+- Do not change dependencies without approval
+- Do not create documentation files unless explicitly requested
+- Do not create verification/tinker scripts when tests already cover the functionality
+- Be concise — focus on what matters, skip obvious details
+- If a frontend change isn't reflected in the UI, the user may need to run `npm run build` or `composer run dev`
