@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\AttendanceController;
+use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\EnrollmentController;
 use App\Http\Controllers\Api\v1\ParentController;
 use App\Http\Controllers\Api\v1\SchoolClassController;
@@ -12,11 +13,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     
-    // Public routes (if any) could go here (e.g., login)
+    // Public routes
+    Route::post('/login', [AuthController::class, 'login']);
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
         
+        // Auth management
+        Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+
         // Admin-only routes
         Route::middleware('role:admin')->group(function () {
             Route::apiResource('users', UserController::class);
@@ -34,8 +40,5 @@ Route::prefix('v1')->group(function () {
         // Routes shared by multiple roles, handled by Policies
         Route::apiResource('attendances', AttendanceController::class);
         Route::apiResource('enrollments', EnrollmentController::class);
-        
-        // Profiles (everyone can view their own, etc.)
-        Route::get('/me', [UserController::class, 'show']); // Example
     });
 });
