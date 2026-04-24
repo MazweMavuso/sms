@@ -103,4 +103,26 @@ class User extends Authenticatable
     {
         return $this->hasRole('parent');
     }
+
+    /**
+     * Relationships for authorization
+     */
+
+    // For Parents: Get their children (students)
+    public function children()
+    {
+        return $this->belongsToMany(User::class, 'parent_student', 'parent_id', 'student_id');
+    }
+
+    // For Students: Get their parents
+    public function parents()
+    {
+        return $this->belongsToMany(User::class, 'parent_student', 'student_id', 'parent_id');
+    }
+
+    // For Teachers: Get subjects they teach
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class, 'teacher_id');
+    }
 }

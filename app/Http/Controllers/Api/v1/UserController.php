@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
+
 class UserController extends Controller
 {
     public function __construct(protected UserService $service) {}
@@ -20,6 +23,8 @@ class UserController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
+        Gate::authorize('viewAny', User::class);
+
         $perPage = (int) $request->query('per_page', 15);
         $users = $this->service->getAllPaginated($perPage);
 
@@ -31,6 +36,8 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): UserResource
     {
+        Gate::authorize('create', User::class);
+
         $user = $this->service->createUserWithProfile($request->validated());
 
         return new UserResource($user);
@@ -47,6 +54,8 @@ class UserController extends Controller
             abort(404, 'User not found');
         }
 
+        Gate::authorize('view', $user);
+
         return new UserResource($user->load(['role', 'teacherProfile', 'studentProfile', 'parentProfile', 'adminProfile']));
     }
 
@@ -55,6 +64,14 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, int $id): UserResource
     {
+        $user = $this->service->getById($id);
+        
+        if (! $user) {
+            abort(404, 'User not found');
+        }
+
+        Gate::authorize('update', $user);
+
         $this->service->updateUserWithProfile($id, $request->validated());
         $user = $this->service->getById($id);
 
@@ -66,6 +83,14 @@ class UserController extends Controller
      */
     public function destroy(int $id): Response
     {
+        $user = $this->service->getById($id);
+
+        if (! $user) {
+            abort(404, 'User not found');
+        }
+
+        Gate::authorize('delete', $user);
+
         $this->service->delete($id);
 
         return response()->noContent();
